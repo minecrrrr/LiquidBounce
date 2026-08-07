@@ -25,7 +25,7 @@ import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsCo
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsFlower
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsHalo
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsImage
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsOrbs
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsCrystals
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsStar
 import net.ccbluex.liquidbounce.render.utils.AnimatedValueGroup
 import org.joml.Vector2f
@@ -51,7 +51,7 @@ object ModuleHats : ClientModule("Hats", ModuleCategories.RENDER) {
         arrayOf(
             HatsCone,
             HatsHalo,
-            HatsOrbs,
+            HatsCrystals,
             HatsFlower,
             HatsStar,
             HatsImage,

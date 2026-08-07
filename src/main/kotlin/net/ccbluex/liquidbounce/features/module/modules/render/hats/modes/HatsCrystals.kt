@@ -22,6 +22,8 @@ package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes
 import net.ccbluex.liquidbounce.config.types.group.ToggleableValueGroup
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsCrystals.HatOrbsSettings.Stretch.bottomStretch
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsCrystals.HatOrbsSettings.Stretch.topStretch
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.drawCustomMesh
@@ -35,17 +37,21 @@ import kotlin.math.sin
 /**
  * @author minecrrrr
  */
-internal object HatsOrbs : HatsMode("Orbs") {
+internal object HatsCrystals : HatsMode("Crystals") {
 
     val color by color("color", Color4b(0, 0, 255, 125))
 
     private object HatOrbsSettings : ValueGroup("HatSettings") {
         val radius by float("Radius", 0.5f, 0f..2f)
-        val speed by float("Speed", 0.5f, 0.1f..10f)
-        val size by float("OrbsSize", 0.1f, 0.01f..0.5f)
+        val speed by float("Speed", 0.5f, -10f..10f)
         val count by int("OrbsCount", 6, 1..12)
+        val size by float("OrbsSize", 0.1f, 0.01f..0.5f)
 
-        object WaveSettings : ToggleableValueGroup(this@HatsOrbs, "Wave", true) {
+        object Stretch : ValueGroup("Stretch") {
+            val topStretch by float("TopStretch", 0.0f, -2.0f..2.0f)
+            val bottomStretch by float("BottomStretch", 0.0f, -2.0f..2.0f)
+        }
+        object WaveSettings : ToggleableValueGroup(this@HatsCrystals, "Wave", true) {
             val waveHeight by float("WaveHeight", 0.1f, 0.01f..1f)
             val waveSpeed by float("WaveSpeed", 2.0f, 0.1f..10f)
         }
@@ -56,6 +62,7 @@ internal object HatsOrbs : HatsMode("Orbs") {
     init {
         tree(HatOrbsSettings)
         tree(HatOrbsSettings.WaveSettings)
+        tree(HatOrbsSettings.Stretch)
     }
 
     override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
@@ -69,19 +76,18 @@ internal object HatsOrbs : HatsMode("Orbs") {
                 val x = getPointX(angle, HatOrbsSettings.radius)
                 val z = getPointZ(angle, HatOrbsSettings.radius)
 
-                val y = if (HatOrbsSettings.WaveSettings.enabled) {
-                    sin(time * HatOrbsSettings.WaveSettings.waveSpeed + i) *
+                val y = when (HatOrbsSettings.WaveSettings.enabled) {
+                    true -> sin(time * HatOrbsSettings.WaveSettings.waveSpeed + i) *
                         HatOrbsSettings.WaveSettings.waveHeight
-                } else {
-                    0f
+                    else -> 0f
                 }
 
                 val rotAngle = getRotationAngle(HatOrbsSettings.spinSpeed)
                 val sinA = rotAngle.fastSin() * HatOrbsSettings.size
                 val cosA = rotAngle.fastCos() * HatOrbsSettings.size
 
-                val top = y + HatOrbsSettings.size
-                val bottom = y - HatOrbsSettings.size
+                val top = y + HatOrbsSettings.size + topStretch
+                val bottom = y - HatOrbsSettings.size - bottomStretch
 
                 val ax = x + sinA
                 val az = z + cosA
