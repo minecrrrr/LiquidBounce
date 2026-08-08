@@ -61,8 +61,8 @@ internal object HatsCrystals : HatsMode("Crystals") {
 
     init {
         tree(HatOrbsSettings)
-        tree(HatOrbsSettings.WaveSettings)
         tree(HatOrbsSettings.Stretch)
+        tree(HatOrbsSettings.WaveSettings)
     }
 
     override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {

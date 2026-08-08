@@ -85,10 +85,9 @@ abstract class HatsMode(name: String) : Mode(name) {
                 val isFriend = FriendManager.isFriend(entity)
                 val inDistance = player.distanceTo(entity) <= friendsOptions.distance
 
-                val shouldRender = if (isMe) {
-                    !mc.options.cameraType.isFirstPerson || showInFirstPerson || ModuleFreeLook.enabled
-                } else {
-                    inDistance && isFriend && friendsOptions.friendView
+                val shouldRender = when {
+                    isMe -> !mc.options.cameraType.isFirstPerson || showInFirstPerson || ModuleFreeLook.enabled
+                    else -> inDistance && isFriend && friendsOptions.friendView
                 }
 
                 if (shouldRender) {
@@ -97,10 +96,9 @@ abstract class HatsMode(name: String) : Mode(name) {
                     val rotation = entity.interpolateCurrentRotation(event.partialTicks)
 
                     val height = ModuleHats.HeightOffset.current()
-                    val equipOffset = if (!entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty) {
-                        equipOffset.equipmentOffset
-                    } else {
-                        0.0F
+                    val equipOffset = when {
+                        !entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty -> equipOffset.equipmentOffset
+                        else -> 0.0F
                     }
 
                     withPositionRelativeToCamera(pos.add(0.0, entity.eyeHeight.toDouble(), 0.0)) {
