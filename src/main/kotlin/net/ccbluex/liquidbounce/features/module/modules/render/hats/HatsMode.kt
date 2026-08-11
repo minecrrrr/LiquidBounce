@@ -45,33 +45,24 @@ import org.joml.Quaternionf
 
 private val ROTATION = Quaternionf()
 
-/**
- * @author minecrrrr
- */
 abstract class HatsMode(name: String) : Mode(name) {
     final override val parent: ModeValueGroup<*>
         get() = modes
 
     // --- Settings ---
-    private val followRotation by boolean("FollowRotation", false)
-
     private class EquipOffset : ValueGroup("EquipmentOffset") {
         val equipmentOffset by float("ArmorOffset", 0.1f, 0f..1f)
     }
-
-    private val equipOffset = tree(EquipOffset())
-
-    private val hurtMarked by boolean("ShowDamage", true)
-
     private class FriendsOptions : ValueGroup("FriendsOptions") {
         val friendView by boolean("ViewOnFriend", true)
         val distance by int("Distance", 64, 8..512, "blocks")
     }
 
+    private val followRotation by boolean("FollowRotation", false)
+    private val equipOffset = tree(EquipOffset())
+    private val hurtMarked by boolean("ShowDamage", true)
     private val friendsOptions = tree(FriendsOptions())
-
     protected val showInFirstPerson by boolean("FirstPersonView", true)
-
     protected val canBeCovered by boolean("CanBeCovered", false)
 
     // --- Render ---

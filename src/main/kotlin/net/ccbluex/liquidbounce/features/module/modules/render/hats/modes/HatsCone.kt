@@ -62,7 +62,7 @@ internal object HatsCone : HatsMode("Cone") {
                 val nextCosine = cos(nextAngle)
                 val nextSine = sin(nextAngle)
 
-                val color = if (!isHurt) colors.getCurrentStepColor(angle) else Color4b(255, 0, 0, colors.firstColor.a)
+                val color = if (!isHurt) colors.getCurrentStepColor(angle) else Color4b.RED.alpha(colors.firstColor.a)
 
                 addVertex(
                     matrix,

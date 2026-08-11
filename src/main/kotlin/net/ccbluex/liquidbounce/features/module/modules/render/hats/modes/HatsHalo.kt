@@ -55,11 +55,9 @@ internal object HatsHalo : HatsMode("Halo") {
                 val outerCurAngleTorus = getAngle(outerI, outerSegments)
                 val outerNextAngleTorus = getNextAngle(outerI, outerSegments)
 
-                val color = if (!isHurt) {
-                    colors
-                        .getCurrentStepColor(outerCurAngleTorus)
-                } else {
-                    Color4b(255, 0, 0, colors.firstColor.a)
+                val color = when {
+                    !isHurt -> colors.getCurrentStepColor(outerCurAngleTorus)
+                    else -> Color4b.RED.alpha(colors.firstColor.a)
                 }
 
                 for (innerI in 0 until innerSegments) {

@@ -38,10 +38,9 @@ class HatsColorSettings : ValueGroup("Colors") {
     }
 
     private fun getColorByAngle(angle: Float, color1: Color4b, color2: Color4b, speed: Float): Color4b {
-        val timeOffset = if (speed > 0f) {
-            ((System.currentTimeMillis().toDouble() / 10000.0) * speed.toDouble() % 1.0) * Mth.TWO_PI
-        } else {
-            0.0
+        val timeOffset = when {
+            speed > 0f -> ((System.currentTimeMillis().toDouble() / 10000.0) * speed.toDouble() % 1.0) * Mth.TWO_PI
+            else -> 0.0
         }
 
         val progress = (Mth.sin(angle + timeOffset) * 0.5 + 0.5)

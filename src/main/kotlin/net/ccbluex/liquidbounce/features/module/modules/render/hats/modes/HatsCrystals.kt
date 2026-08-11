@@ -98,7 +98,7 @@ internal object HatsCrystals : HatsMode("Crystals") {
                 val dx = x - cosA
                 val dz = z + sinA
 
-                val color = if (!isHurt) color else Color4b(255, 0, 0, color.a)
+                val color = if (!isHurt) color else Color4b.RED.alpha(color.a)
                 // Rendering of the top part of the rhombus (4 faces/8 triangles).
                 addVertex(matrix, x, top, z).setColor(color)
                 addVertex(matrix, dx, y, dz).setColor(color)
