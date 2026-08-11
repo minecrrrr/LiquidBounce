@@ -72,6 +72,8 @@ abstract class HatsMode(name: String) : Mode(name) {
 
     protected val showInFirstPerson by boolean("FirstPersonView", true)
 
+    protected val canBeCovered by boolean("CanBeCovered", false)
+
     // --- Render ---
     protected abstract fun WorldRenderEnvironment.drawHat(isHurt: Boolean)
 

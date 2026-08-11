@@ -53,7 +53,7 @@ internal object HatsStar : HatsMode("Star") {
     override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
         val rotAngle = getRotationAngle(HatStarSettings.spinSpeed)
         withHatRotation(rotAngle) {
-            drawCustomMesh(ClientRenderPipelines.triangles(noDepthTest = true)) { matrix ->
+            drawCustomMesh(ClientRenderPipelines.triangles(noDepthTest = !canBeCovered)) { matrix ->
                 val points = HatStarSettings.pointsCount
                 val outerSegments = points * 32
                 val innerSegments = 12
