@@ -22,6 +22,7 @@ package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsColorSettings
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.drawCustomMesh
@@ -39,21 +40,17 @@ internal object HatsCone : HatsMode("Cone") {
     private val colors = HatsColorSettings()
 
     private object HatConeSettings : ValueGroup("HatSettings") {
-        object RadiusSettings : ValueGroup("RadiusSettings") {
-            val outerRadius by float("OuterRadius", 0.6f, 0.1f..2f)
-        }
-
+        val outerRadius by float("OuterRadius", 0.6f, 0.1f..2f)
         val peak by float("Peak", 0.3f, 0.01f..2f)
     }
 
     init {
         tree(HatConeSettings)
-        tree(HatConeSettings.RadiusSettings)
         tree(colors)
     }
 
     override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
-        drawCustomMesh(ClientRenderPipelines.triangles(noDepthTest = true)) { matrix ->
+        drawCustomMesh(ClientRenderPipelines.triangles(noDepthTest = !canBeCovered)) { matrix ->
             val segments = 128
             for (i in 0 until segments) {
                 val angle = segmentAngle(i, segments)
@@ -67,15 +64,15 @@ internal object HatsCone : HatsMode("Cone") {
 
                 addVertex(
                     matrix,
-                    cosine * HatConeSettings.RadiusSettings.outerRadius,
+                    cosine * HatConeSettings.outerRadius,
                     0f,
-                    sine * HatConeSettings.RadiusSettings.outerRadius
+                    sine * HatConeSettings.outerRadius
                 ).setColor(color)
                 addVertex(
                     matrix,
-                    nextCosine * HatConeSettings.RadiusSettings.outerRadius,
+                    nextCosine * HatConeSettings.outerRadius,
                     0f,
-                    nextSine * HatConeSettings.RadiusSettings.outerRadius
+                    nextSine * HatConeSettings.outerRadius
                 ).setColor(color)
                 addVertex(matrix, 0f, HatConeSettings.peak, 0f).setColor(color)
             }

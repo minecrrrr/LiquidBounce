@@ -22,6 +22,7 @@ package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsColorSettings
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.addTorusQuad
@@ -47,7 +48,7 @@ internal object HatsHalo : HatsMode("Halo") {
     }
 
     override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
-        drawCustomMesh(ClientRenderPipelines.quads(noDepthTest = true)) { matrix ->
+        drawCustomMesh(ClientRenderPipelines.quads(noDepthTest = !canBeCovered)) { matrix ->
             val outerSegments = 144
             val innerSegments = 12
 

@@ -28,12 +28,15 @@ import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsIm
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsOrbs
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsStar
 import net.ccbluex.liquidbounce.render.utils.AnimatedValueGroup
+import org.joml.Matrix4f
 import org.joml.Vector2f
 
 /**
  * @author minecrrrr
  */
 object ModuleHats : ClientModule("Hats", ModuleCategories.RENDER) {
+
+    val canBeCovered by boolean("CanBeCovered", default = false)
 
     object HeightOffset : AnimatedValueGroup("HeightOffset") {
         override val curve = curve("Height") {

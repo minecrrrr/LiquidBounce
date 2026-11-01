@@ -26,32 +26,24 @@ import net.ccbluex.liquidbounce.event.events.WorldRenderEvent
 import net.ccbluex.liquidbounce.event.handler
 import net.ccbluex.liquidbounce.features.misc.FriendManager
 import net.ccbluex.liquidbounce.features.module.modules.render.ModuleFreeLook
+import net.ccbluex.liquidbounce.features.module.modules.render.ModuleRotations
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.HeightOffset
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.modes
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.renderEnvironment
 import net.ccbluex.liquidbounce.render.withPositionRelativeToCamera
 import net.ccbluex.liquidbounce.render.withPush
 import net.ccbluex.liquidbounce.utils.entity.interpolateCurrentPosition
-import net.ccbluex.liquidbounce.utils.entity.interpolateCurrentRotation
 import net.minecraft.util.Mth
 import net.minecraft.world.entity.EquipmentSlot
 import org.joml.Quaternionf
-
-private val ROTATION = Quaternionf()
 
 abstract class HatsMode(name: String) : Mode(name) {
     final override val parent: ModeValueGroup<*>
         get() = modes
 
     // --- Settings ---
-    private val followRotation by boolean("FollowRotation", false)
-
-    private class EquipOffset : ValueGroup("EquipmentOffset") {
-        val equipmentOffset by float("ArmorOffset", 0.1f, 0f..1f)
-    }
-
-    private val equipOffset = tree(EquipOffset())
-
+    private val equipmentOffset by float("ArmorOffset", 0.1f, 0f..1f)
     private val hurtMarked by boolean("ShowDamage", true)
 
     private class FriendsOptions : ValueGroup("FriendsOptions") {
@@ -61,7 +53,7 @@ abstract class HatsMode(name: String) : Mode(name) {
 
     private val friendsOptions = tree(FriendsOptions())
 
-    protected val showInFirstPerson by boolean("FirstPersonView", true)
+    protected val showInFirstPerson by boolean("FirstPersonView", false)
 
     // --- Render ---
     protected abstract fun WorldRenderEnvironment.drawHat(isHurt: Boolean)
@@ -84,20 +76,31 @@ abstract class HatsMode(name: String) : Mode(name) {
 
                 if (shouldRender) {
                     val hurtMarked = entity.hurtTime > 0 && hurtMarked
+
+                    val equipOffset = if
+                        (!entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty) { equipmentOffset } else { 0.0F }
+
                     val pos = entity.interpolateCurrentPosition(event.partialTicks)
-                    val rotation = entity.interpolateCurrentRotation(event.partialTicks)
 
-                    val height = ModuleHats.HeightOffset.current()
-                    val equipOffset = if (!entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty) {
-                        equipOffset.equipmentOffset
-                    } else {
-                        0.0F
-                    }
+                    val rot = ModuleRotations.modelRotation.takeIf { ModuleRotations.enabled }
+                    val prevRot = ModuleRotations.prevModelRotation.takeIf { ModuleRotations.enabled }
 
-                    withPositionRelativeToCamera(pos.add(0.0, entity.eyeHeight.toDouble(), 0.0)) {
+                    val headYaw =
+                        Mth.rotLerp(event.partialTicks, prevRot?.yRot ?: entity.yHeadRotO, rot?.yRot ?: entity.yHeadRot)
+                    val pitch =
+                        Mth.lerp(event.partialTicks, prevRot?.xRot ?: entity.xRotO, rot?.xRot ?: entity.xRot)
+
+                    val flatPos = entity.isVisuallySwimming || entity.isFallFlying || entity.isVisuallyCrawling
+                    val neck = if (flatPos) entity.bbHeight * 0.6 else entity.eyeHeight - 0.21
+                    val forward = if (flatPos) 0.5f else 0f
+                    val height = HeightOffset.current()
+
+                    withPositionRelativeToCamera(pos.add(0.0, neck, 0.0)) {
                         poseStack.withPush {
-                            if (followRotation) rotate(rotation.toQuaternion(ROTATION))
-                            translate(0F, entity.bbHeight - entity.eyeHeight + height + equipOffset, 0F)
+                            rotate(Quaternionf().rotationY(Math.toRadians(-headYaw.toDouble()).toFloat()))
+                            rotate(Quaternionf().rotationX(Math.toRadians(pitch.toDouble()).toFloat()))
+
+                            translate(0F, 0.35f + height + equipOffset, forward)
                             drawHat(hurtMarked)
                         }
                     }

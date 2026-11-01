@@ -22,6 +22,7 @@ package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsColorSettings
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.addTorusQuad
@@ -55,7 +56,7 @@ internal object HatsStar : HatsMode("Star") {
     override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
         val rotAngle = getRotationAngle(HatStarSettings.spinSpeed)
         withHatRotation(rotAngle) {
-            drawCustomMesh(ClientRenderPipelines.quads(noDepthTest = true)) { matrix ->
+            drawCustomMesh(ClientRenderPipelines.quads(noDepthTest = !canBeCovered)) { matrix ->
                 val points = HatStarSettings.pointsCount
                 val outerSegments = points * 32
                 val innerSegments = 12
@@ -70,7 +71,7 @@ internal object HatsStar : HatsMode("Star") {
                         HatStarSettings.outerRadius,
                         points,
                         HatStarSettings.sharpness,
-                        1.75F,
+                        1.75
                     )
                     val nextRadius = getStarRadius(
                         outerNextAngleStar,
