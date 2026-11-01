@@ -1,7 +1,7 @@
 /*
  * This file is part of LiquidBounce (https://github.com/CCBlueX/LiquidBounce)
  *
- * Copyright (c) 2015 - 2025 CCBlueX
+ * Copyright (c) 2015 - 2026 CCBlueX
  *
  * LiquidBounce is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,10 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
 
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsColorSettings
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
@@ -30,10 +29,7 @@ import net.ccbluex.liquidbounce.render.drawCustomMesh
 import net.ccbluex.liquidbounce.render.engine.type.Color4b
 import net.ccbluex.liquidbounce.render.segmentAngle
 
-/**
- * @author minecrrrr
- */
-internal object HatsHalo : HatsMode("Halo") {
+internal object LegacyHatsHalo : LegacyHatsMode("Halo") {
 
     private val colors = HatsColorSettings()
 
@@ -47,7 +43,7 @@ internal object HatsHalo : HatsMode("Halo") {
         tree(colors)
     }
 
-    override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
+    override fun WorldRenderEnvironment.drawLegacyHat(isHurt: Boolean) {
         drawCustomMesh(ClientRenderPipelines.quads(noDepthTest = !canBeCovered)) { matrix ->
             val outerSegments = 144
             val innerSegments = 12

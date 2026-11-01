@@ -17,10 +17,9 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
 
 import net.ccbluex.liquidbounce.config.types.toTextureProperty
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.drawTexQuad
 import net.ccbluex.liquidbounce.render.engine.type.Color4b
@@ -30,7 +29,7 @@ import net.minecraft.util.Mth
 import org.joml.Quaternionf
 import org.joml.Vector2f
 
-internal object HatsImage : HatsMode("Image") {
+internal object LegacyHatsImage : LegacyHatsMode("Image") {
 
     private val image by file("Image", supportedExtensions = PNG_AND_JPG)
         .toTextureProperty(this, printErrorToChat = true)
@@ -40,7 +39,7 @@ internal object HatsImage : HatsMode("Image") {
 
     private val ROTATION = Quaternionf()
 
-    override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
+    override fun WorldRenderEnvironment.drawLegacyHat(isHurt: Boolean) {
         val texture = image ?: return
 
         poseStack.withPush {

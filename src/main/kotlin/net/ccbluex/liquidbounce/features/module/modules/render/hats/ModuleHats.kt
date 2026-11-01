@@ -19,22 +19,23 @@
 
 package net.ccbluex.liquidbounce.features.module.modules.render.hats
 
+import net.ccbluex.liquidbounce.config.types.group.Mode
+import net.ccbluex.liquidbounce.config.types.group.ModeValueGroup
 import net.ccbluex.liquidbounce.features.module.ClientModule
 import net.ccbluex.liquidbounce.features.module.ModuleCategories
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsCone
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsFlower
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsHalo
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsImage
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsOrbs
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.HatsStar
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsCone
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsFlower
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsHalo
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsImage
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsOrbs
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsStar
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.model.ModelHatsTest
 import net.ccbluex.liquidbounce.render.utils.AnimatedValueGroup
-import org.joml.Matrix4f
 import org.joml.Vector2f
 
-/**
- * @author minecrrrr
- */
 object ModuleHats : ClientModule("Hats", ModuleCategories.RENDER) {
+    override val tag: String
+        get() = styles.activeMode.let { style -> "${style.hats.activeMode.name} (${style.name})" }
 
     val canBeCovered by boolean("CanBeCovered", default = false)
 
@@ -50,15 +51,38 @@ object ModuleHats : ClientModule("Hats", ModuleCategories.RENDER) {
         tree(HeightOffset)
     }
 
-    val modes = choices("Mode", 0) {
+    val styles = choices("Style", 0) {
         arrayOf(
-            HatsCone,
-            HatsHalo,
-            HatsOrbs,
-            HatsFlower,
-            HatsStar,
-            HatsImage,
+            LegacyHatsStyle,
+            ModelHatsStyle
         )
-    }.apply { tagBy(this) }
+    }
 
+    abstract class StyleMode(name: String) : Mode(name) {
+        final override val parent: ModeValueGroup<*>
+            get() = styles
+
+        abstract val hats: ModeValueGroup<*>
+    }
+
+    internal object LegacyHatsStyle : StyleMode("Legacy") {
+        override val hats = modes("Hat", 0) {
+            arrayOf(
+                LegacyHatsHalo,
+                LegacyHatsCone,
+                LegacyHatsOrbs,
+                LegacyHatsFlower,
+                LegacyHatsStar,
+                LegacyHatsImage
+            )
+        }
+    }
+
+    internal object ModelHatsStyle : StyleMode("Model") {
+        override val hats = modes("Hat", 0) {
+            arrayOf(
+                ModelHatsTest
+            )
+        }
+    }
 }

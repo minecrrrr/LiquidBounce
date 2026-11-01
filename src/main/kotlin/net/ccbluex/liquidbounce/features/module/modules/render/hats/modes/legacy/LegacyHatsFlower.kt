@@ -1,7 +1,7 @@
 /*
  * This file is part of LiquidBounce (https://github.com/CCBlueX/LiquidBounce)
  *
- * Copyright (c) 2015 - 2025 CCBlueX
+ * Copyright (c) 2015 - 2026 CCBlueX
  *
  * LiquidBounce is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,10 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
 
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsColorSettings
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
@@ -31,71 +30,67 @@ import net.ccbluex.liquidbounce.render.engine.type.Color4b
 import net.ccbluex.liquidbounce.render.segmentAngle
 import net.minecraft.util.Mth
 import kotlin.math.abs
-import kotlin.math.pow
 
-/**
- * @author minecrrrr
- */
-internal object HatsStar : HatsMode("Star") {
+internal object LegacyHatsFlower : LegacyHatsMode("Flower") {
 
     private val colors = HatsColorSettings()
 
-    private object HatStarSettings : ValueGroup("HatSettings") {
+    private object HatFlowerSettings : ValueGroup("HatSettings") {
         val outerRadius by float("Radius", 0.3f, 0.1f..2f)
         val innerRadius by float("Thickness", 0.05f, 0.01f..1f)
-        val sharpness by float("Sharpness", 0.6f, 0.1f..0.7f)
-        val pointsCount by int("PointsCount", 5, 5..15)
+        val sharpness by float("Sharpness", 0.6f, 0.1f..0.9f)
+        val petalCount by int("PetalCount", 5, 5..15)
         val spinSpeed by float("SpinSpeed", 1f, -10f..10f)
     }
 
     init {
-        tree(HatStarSettings)
+        tree(HatFlowerSettings)
         tree(colors)
     }
 
-    override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
-        val rotAngle = getRotationAngle(HatStarSettings.spinSpeed)
+    override fun WorldRenderEnvironment.drawLegacyHat(isHurt: Boolean) {
+        val rotAngle = getRotationAngle(HatFlowerSettings.spinSpeed)
         withHatRotation(rotAngle) {
             drawCustomMesh(ClientRenderPipelines.quads(noDepthTest = !canBeCovered)) { matrix ->
-                val points = HatStarSettings.pointsCount
-                val outerSegments = points * 32
+                val petals = HatFlowerSettings.petalCount
+                val outerSegments = petals * 32
                 val innerSegments = 12
 
-                for (mainI in 0 until outerSegments) {
 
-                    val outerCurAngleStar = segmentAngle(mainI, outerSegments)
-                    val outerNextAngleStar = segmentAngle(mainI + 1, outerSegments)
+                for (outerI in 0 until outerSegments) {
+                    // Outer
+                    val outerCurAngleFlower = segmentAngle(outerI, outerSegments)
+                    val outerNextAngleFlower = segmentAngle(outerI + 1, outerSegments)
 
-                    val curRadius = getStarRadius(
-                        outerCurAngleStar,
-                        HatStarSettings.outerRadius,
-                        points,
-                        HatStarSettings.sharpness,
-                        1.75F
+                    val curRadius = getFlowerRadius(
+                        outerCurAngleFlower,
+                        HatFlowerSettings.outerRadius,
+                        petals,
+                        HatFlowerSettings.sharpness
                     )
-                    val nextRadius = getStarRadius(
-                        outerNextAngleStar,
-                        HatStarSettings.outerRadius,
-                        points,
-                        HatStarSettings.sharpness,
-                        1.75F,
+                    val nextRadius = getFlowerRadius(
+                        outerNextAngleFlower,
+                        HatFlowerSettings.outerRadius,
+                        petals,
+                        HatFlowerSettings.sharpness
                     )
 
                     val color = if (!isHurt) {
-                        colors
-                            .getCurrentStepColor(outerCurAngleStar)
+                        colors.getCurrentStepColor(outerCurAngleFlower)
                     } else {
                         Color4b(255, 0, 0, colors.firstColor.a)
                     }
+
+                    // Inner
                     for (innerI in 0 until innerSegments) {
                         addTorusQuad(
                             matrix,
                             innerSegments,
-                            outerCurAngleStar,
-                            outerNextAngleStar,
+                            outerCurAngleFlower,
+                            outerNextAngleFlower,
                             curRadius,
                             nextRadius,
-                            HatStarSettings.innerRadius,
+                            HatFlowerSettings.innerRadius,
                             innerI,
                             color,
                         )
@@ -105,13 +100,12 @@ internal object HatsStar : HatsMode("Star") {
         }
     }
 
-    private fun getStarRadius(angle: Float, baseRadius: Float, points: Int, sharpness: Float, exponent: Float): Float {
-        val section = Mth.TWO_PI / points
-        val m = (angle % section) / section
-        val dist = abs(m * 2.0F - 1.0F)
-        val linearProgress = 1.0F - dist
+    private fun getFlowerRadius(angle: Float, baseRadius: Float, points: Int, sharpness: Float): Float {
+        val innerRadius = baseRadius * sharpness
+        val f = Mth.PI / points
+        val r = abs(angle % (f * 2) - f) / f
 
-        return (baseRadius * (1.0F - sharpness + sharpness * linearProgress.pow(exponent)))
+        return innerRadius + (baseRadius - innerRadius) * (1f - r)
     }
 
 }

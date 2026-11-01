@@ -1,7 +1,7 @@
 /*
  * This file is part of LiquidBounce (https://github.com/CCBlueX/LiquidBounce)
  *
- * Copyright (c) 2015 - 2025 CCBlueX
+ * Copyright (c) 2015 - 2026 CCBlueX
  *
  * LiquidBounce is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,13 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
 
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsColorSettings
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsCone.HatConeSettings.outerRadius
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsCone.HatConeSettings.peak
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.drawCustomMesh
@@ -32,10 +33,7 @@ import net.ccbluex.liquidbounce.render.setColor
 import kotlin.math.cos
 import kotlin.math.sin
 
-/**
- * @author minecrrrr
- */
-internal object HatsCone : HatsMode("Cone") {
+internal object LegacyHatsCone : LegacyHatsMode("Cone") {
 
     private val colors = HatsColorSettings()
 
@@ -49,7 +47,7 @@ internal object HatsCone : HatsMode("Cone") {
         tree(colors)
     }
 
-    override fun WorldRenderEnvironment.drawHat(isHurt: Boolean) {
+    override fun WorldRenderEnvironment.drawLegacyHat(isHurt: Boolean) {
         drawCustomMesh(ClientRenderPipelines.triangles(noDepthTest = !canBeCovered)) { matrix ->
             val segments = 128
             for (i in 0 until segments) {
@@ -64,17 +62,17 @@ internal object HatsCone : HatsMode("Cone") {
 
                 addVertex(
                     matrix,
-                    cosine * HatConeSettings.outerRadius,
+                    cosine * outerRadius,
                     0f,
-                    sine * HatConeSettings.outerRadius
+                    sine * outerRadius
                 ).setColor(color)
                 addVertex(
                     matrix,
-                    nextCosine * HatConeSettings.outerRadius,
+                    nextCosine * outerRadius,
                     0f,
-                    nextSine * HatConeSettings.outerRadius
+                    nextSine * outerRadius
                 ).setColor(color)
-                addVertex(matrix, 0f, HatConeSettings.peak, 0f).setColor(color)
+                addVertex(matrix, 0f, peak, 0f).setColor(color)
             }
         }
     }
