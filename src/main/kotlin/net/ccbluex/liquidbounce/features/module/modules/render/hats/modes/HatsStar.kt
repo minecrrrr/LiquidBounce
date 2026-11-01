@@ -71,7 +71,7 @@ internal object HatsStar : HatsMode("Star") {
                         HatStarSettings.outerRadius,
                         points,
                         HatStarSettings.sharpness,
-                        1.75
+                        1.75F
                     )
                     val nextRadius = getStarRadius(
                         outerNextAngleStar,
