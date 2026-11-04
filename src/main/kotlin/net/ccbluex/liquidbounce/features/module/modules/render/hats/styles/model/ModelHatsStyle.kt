@@ -138,7 +138,8 @@ internal object ModelHatsStyle : StyleMode("Model"), EntityModelAttachment {
     @Suppress("unused")
     enum class HatPreset(override val tag: String) : Tagged {
         CHRISTMAS("Christmas"),
-        MUSHROOM("Mushroom");
+        MUSHROOM("Mushroom"),
+        HORNS("Horns"),;
 
         val model get() = "hats/models/${name.lowercase()}.json"
         val texture get() = "hats/textures/${name.lowercase()}.png"
