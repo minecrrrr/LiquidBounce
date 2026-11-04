@@ -17,13 +17,11 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.modes
 
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsColorSettings
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsCone.HatConeSettings.outerRadius
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsCone.HatConeSettings.peak
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.LegacyHatsColorSettings
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.LegacyHatsStyle
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.drawCustomMesh
@@ -33,9 +31,9 @@ import net.ccbluex.liquidbounce.render.setColor
 import kotlin.math.cos
 import kotlin.math.sin
 
-internal object LegacyHatsCone : LegacyHatsMode("Cone") {
+internal object LegacyHatsCone : LegacyHatsStyle("Cone") {
 
-    private val colors = HatsColorSettings()
+    private val colors = LegacyHatsColorSettings()
 
     private object HatConeSettings : ValueGroup("HatSettings") {
         val outerRadius by float("OuterRadius", 0.6f, 0.1f..2f)
@@ -62,17 +60,17 @@ internal object LegacyHatsCone : LegacyHatsMode("Cone") {
 
                 addVertex(
                     matrix,
-                    cosine * outerRadius,
+                    cosine * HatConeSettings.outerRadius,
                     0f,
-                    sine * outerRadius
+                    sine * HatConeSettings.outerRadius
                 ).setColor(color)
                 addVertex(
                     matrix,
-                    nextCosine * outerRadius,
+                    nextCosine * HatConeSettings.outerRadius,
                     0f,
-                    nextSine * outerRadius
+                    nextSine * HatConeSettings.outerRadius
                 ).setColor(color)
-                addVertex(matrix, 0f, peak, 0f).setColor(color)
+                addVertex(matrix, 0f, HatConeSettings.peak, 0f).setColor(color)
             }
         }
     }

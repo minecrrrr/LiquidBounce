@@ -17,11 +17,11 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.modes
 
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsColorSettings
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.LegacyHatsColorSettings
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.LegacyHatsStyle
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.addTorusQuad
@@ -31,9 +31,9 @@ import net.ccbluex.liquidbounce.render.segmentAngle
 import net.minecraft.util.Mth
 import kotlin.math.abs
 
-internal object LegacyHatsFlower : LegacyHatsMode("Flower") {
+internal object LegacyHatsFlower : LegacyHatsStyle("Flower") {
 
-    private val colors = HatsColorSettings()
+    private val colors = LegacyHatsColorSettings()
 
     private object HatFlowerSettings : ValueGroup("HatSettings") {
         val outerRadius by float("Radius", 0.3f, 0.1f..2f)

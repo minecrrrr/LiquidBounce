@@ -17,9 +17,10 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.modes
 
 import net.ccbluex.liquidbounce.config.types.toTextureProperty
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.LegacyHatsStyle
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.drawTexQuad
 import net.ccbluex.liquidbounce.render.engine.type.Color4b
@@ -29,7 +30,7 @@ import net.minecraft.util.Mth
 import org.joml.Quaternionf
 import org.joml.Vector2f
 
-internal object LegacyHatsImage : LegacyHatsMode("Image") {
+internal object LegacyHatsImage : LegacyHatsStyle("Image") {
 
     private val image by file("Image", supportedExtensions = PNG_AND_JPG)
         .toTextureProperty(this, printErrorToChat = true)

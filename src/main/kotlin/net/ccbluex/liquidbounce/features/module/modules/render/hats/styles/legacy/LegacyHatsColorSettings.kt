@@ -17,13 +17,13 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy
 
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
 import net.ccbluex.liquidbounce.render.engine.type.Color4b
 import net.minecraft.util.Mth
 
-class HatsColorSettings : ValueGroup("Colors") {
+class LegacyHatsColorSettings : ValueGroup("Colors") {
     val syncColors by boolean("SyncColors", true)
     val firstColor by color("FirstColor", Color4b(0, 0, 255, 125))
     val secondColor by color("SecondColor", Color4b(0, 0, 255, 125))

@@ -30,6 +30,7 @@ import net.ccbluex.liquidbounce.api.models.cosmetics.CosmeticCategory;
 import net.ccbluex.liquidbounce.features.cosmetic.CosmeticService;
 import net.ccbluex.liquidbounce.features.module.modules.render.*;
 import net.ccbluex.liquidbounce.interfaces.EntityRenderStateAddition;
+import net.ccbluex.liquidbounce.render.EntityModelAttachments;
 import net.ccbluex.liquidbounce.render.engine.type.Color4b;
 import net.ccbluex.liquidbounce.utils.aiming.data.Rotation;
 import net.minecraft.client.Minecraft;
@@ -38,6 +39,7 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
@@ -47,8 +49,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -200,5 +202,25 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
         if (state.isInvisible && !ModuleAntiBlind.canRender(DoRender.INVISIBLE_ENTITIES)) {
             ci.cancel();
         }
+    }
+
+    // Attachments
+    @Shadow
+    public abstract M getModel();
+
+    @Inject(
+        method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(" + "Lnet/minecraft/client/model/Model;Ljava/lang/Object;" + "Lcom/mojang/blaze3d/vertex/PoseStack;" + "Lnet/minecraft/client/renderer/rendertype/RenderType;" + "III" + "Lnet/minecraft/client/renderer/texture/UvMapping;I)V",
+            shift = At.Shift.BEFORE
+        )
+    )
+    private void lb$entityModel(S state, PoseStack poseStack, SubmitNodeCollector collector,
+                                CameraRenderState camera, CallbackInfo ci) {
+        if (!(state instanceof AvatarRenderState)) return;
+        if (!(((EntityRenderStateAddition) state).liquid_bounce$getEntity() instanceof LivingEntity entity)) return;
+
+        EntityModelAttachments.INSTANCE.submit(getModel(), state, entity, poseStack, collector);
     }
 }

@@ -17,16 +17,18 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy
 
+import net.ccbluex.liquidbounce.config.types.group.Mode
 import net.ccbluex.liquidbounce.config.types.group.ModeValueGroup
-import net.ccbluex.liquidbounce.config.types.group.ValueGroup
+import net.ccbluex.liquidbounce.config.types.group.ToggleableValueGroup
 import net.ccbluex.liquidbounce.event.events.WorldRenderEvent
 import net.ccbluex.liquidbounce.event.handler
 import net.ccbluex.liquidbounce.features.module.modules.render.ModuleRotations
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.HatsMode
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.HeightOffset
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.LegacyHatsStyle
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.shouldRender
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.renderEnvironment
 import net.ccbluex.liquidbounce.render.withPositionRelativeToCamera
@@ -36,16 +38,17 @@ import net.minecraft.util.Mth
 import net.minecraft.world.entity.EquipmentSlot
 import org.joml.Quaternionf
 
-abstract class LegacyHatsMode(name: String) : HatsMode(name) {
+abstract class LegacyHatsStyle(name: String) : Mode(name) {
     final override val parent: ModeValueGroup<*>
         get() = LegacyHatsStyle.hats
+
+    val canBeCovered by boolean("CanBeCovered", default = false)
 
     // --- Settings ---
     private val equipmentOffset by float("ArmorOffset", 0.1f, 0f..1f)
     private val hurtMarked by boolean("ShowDamage", true)
 
-    private class FriendsOptions : ValueGroup("FriendsOptions") {
-        val friendView by boolean("ViewOnFriend", true)
+    private class FriendsOptions : ToggleableValueGroup(ModuleHats, "FriendsOptions", true) {
         val distance by int("Distance", 64, 8..512, "blocks")
     }
 
@@ -63,37 +66,41 @@ abstract class LegacyHatsMode(name: String) : HatsMode(name) {
         event.renderEnvironment {
             for (entity in world.players()) {
 
-                if (shouldRender(entity, showInFirstPerson, friendsOptions.friendView, friendsOptions.distance)) {
-                    val hurtMarked = entity.hurtTime > 0 && hurtMarked
+                if (!shouldRender(entity, showInFirstPerson, friendsOptions.enabled, friendsOptions.distance)) continue
+                val hurtMarked = entity.hurtTime > 0 && hurtMarked
 
-                    val equipOffset = if
-                        (!entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty) { equipmentOffset } else { 0.0F }
+                val equipOffset = if
+                                      (!entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty) {
+                    equipmentOffset
+                } else {
+                    0.0F
+                }
 
-                    val pos = entity.interpolateCurrentPosition(event.partialTicks)
+                val pos = entity.interpolateCurrentPosition(event.partialTicks)
 
-                    val rot = ModuleRotations.modelRotation.takeIf { ModuleRotations.enabled }
-                    val prevRot = ModuleRotations.prevModelRotation.takeIf { ModuleRotations.enabled }
+                val rot = ModuleRotations.modelRotation.takeIf { ModuleRotations.enabled }
+                val prevRot = ModuleRotations.prevModelRotation.takeIf { ModuleRotations.enabled }
 
-                    val headYaw =
-                        Mth.rotLerp(event.partialTicks, prevRot?.yRot ?: entity.yHeadRotO, rot?.yRot ?: entity.yHeadRot)
-                    val pitch =
-                        Mth.lerp(event.partialTicks, prevRot?.xRot ?: entity.xRotO, rot?.xRot ?: entity.xRot)
+                val headYaw =
+                    Mth.rotLerp(event.partialTicks, prevRot?.yRot ?: entity.yHeadRotO, rot?.yRot ?: entity.yHeadRot)
+                val pitch =
+                    Mth.lerp(event.partialTicks, prevRot?.xRot ?: entity.xRotO, rot?.xRot ?: entity.xRot)
 
-                    val flatPos = entity.isVisuallySwimming || entity.isFallFlying || entity.isVisuallyCrawling
-                    val neck = if (flatPos) entity.bbHeight * 0.6 else entity.eyeHeight - 0.21
-                    val forward = if (flatPos) 0.5f else 0f
-                    val height = HeightOffset.current()
+                val flatPos = entity.isVisuallySwimming || entity.isFallFlying || entity.isVisuallyCrawling
+                val neck = if (flatPos) entity.bbHeight * 0.6 else entity.eyeHeight - 0.21
+                val forward = if (flatPos) 0.5f else 0f
+                val height = HeightOffset.current()
 
-                    withPositionRelativeToCamera(pos.add(0.0, neck, 0.0)) {
-                        poseStack.withPush {
-                            rotate(Quaternionf().rotationY(Math.toRadians(-headYaw.toDouble()).toFloat()))
-                            rotate(Quaternionf().rotationX(Math.toRadians(pitch.toDouble()).toFloat()))
+                withPositionRelativeToCamera(pos.add(0.0, neck, 0.0)) {
+                    poseStack.withPush {
+                        rotate(Quaternionf().rotationY(Math.toRadians(-headYaw.toDouble()).toFloat()))
+                        rotate(Quaternionf().rotationX(Math.toRadians(pitch.toDouble()).toFloat()))
 
-                            translate(0F, 0.35f + height + equipOffset, forward)
-                            drawLegacyHat(hurtMarked)
-                        }
+                        translate(0F, 0.35f + height + equipOffset, forward)
+                        drawLegacyHat(hurtMarked)
                     }
                 }
+
             }
         }
     }

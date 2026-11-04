@@ -17,12 +17,15 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.model
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.styles
 
-import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
+import net.ccbluex.liquidbounce.config.types.group.Mode
+import net.ccbluex.liquidbounce.config.types.group.ModeValueGroup
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats
 
-internal object ModelHatsTest : ModelHatsMode("Test") {
-    override fun WorldRenderEnvironment.drawModelHat() {
-        TODO("Not yet implemented")
-    }
+abstract class StyleMode(name: String) : Mode(name) {
+    final override val parent: ModeValueGroup<*>
+        get() = ModuleHats.styles
+
+    open val detail: String? get() = null
 }

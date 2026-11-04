@@ -74,6 +74,17 @@ data class Vec3f(val x: Float, val y: Float, val z: Float) {
         )
     }
 
+    fun rotateZ(angle: Float): Vec3f {
+        val cos = angle.fastCos()
+        val sin = angle.fastSin()
+
+        return Vec3f(
+            this.x * cos - this.y * sin,
+            this.y * cos + this.x * sin,
+            this.z,
+        )
+    }
+
     fun lengthSqr(): Float = x * x + y * y + z * z
 
     fun length(): Float = sqrt(lengthSqr())

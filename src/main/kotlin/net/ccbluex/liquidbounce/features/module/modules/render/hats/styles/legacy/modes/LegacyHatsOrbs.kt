@@ -17,12 +17,11 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy
+package net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.modes
 
 import net.ccbluex.liquidbounce.config.types.group.ToggleableValueGroup
 import net.ccbluex.liquidbounce.config.types.group.ValueGroup
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.ModuleHats.canBeCovered
-import net.ccbluex.liquidbounce.features.module.modules.render.hats.modes.legacy.LegacyHatsOrbs.HatOrbsSettings.OrbSettings
+import net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.legacy.LegacyHatsStyle
 import net.ccbluex.liquidbounce.render.ClientRenderPipelines
 import net.ccbluex.liquidbounce.render.WorldRenderEnvironment
 import net.ccbluex.liquidbounce.render.drawCustomMesh
@@ -34,7 +33,7 @@ import net.ccbluex.liquidbounce.utils.math.fastSin
 import kotlin.math.cos
 import kotlin.math.sin
 
-internal object LegacyHatsOrbs : LegacyHatsMode("Orbs") {
+internal object LegacyHatsOrbs : LegacyHatsStyle("Orbs") {
 
     val color by color("color", Color4b(0, 0, 255, 125))
 
@@ -59,9 +58,7 @@ internal object LegacyHatsOrbs : LegacyHatsMode("Orbs") {
         }
 
         init {
-            tree(OrbSettings)
-            tree(OrbitSettings)
-            tree(WaveSettings)
+            treeAll(OrbSettings, OrbitSettings, WaveSettings)
         }
 
     }
@@ -75,8 +72,8 @@ internal object LegacyHatsOrbs : LegacyHatsMode("Orbs") {
             val time = ((System.currentTimeMillis() % 1000000L).toFloat() / 1000f) * HatOrbsSettings.OrbitSettings.speed
 
             // Loop for rendering each individual orb (orbit).
-            for (i in 0 until OrbSettings.count) {
-                val angle = (segmentAngle(i, OrbSettings.count) + time)
+            for (i in 0 until HatOrbsSettings.OrbSettings.count) {
+                val angle = (segmentAngle(i, HatOrbsSettings.OrbSettings.count) + time)
 
                 val x = getPointX(angle, HatOrbsSettings.OrbitSettings.radius)
                 val z = getPointZ(angle, HatOrbsSettings.OrbitSettings.radius)
@@ -88,12 +85,12 @@ internal object LegacyHatsOrbs : LegacyHatsMode("Orbs") {
                     0f
                 }
 
-                val rotAngle = getRotationAngle(OrbSettings.spinSpeed)
-                val sinA = rotAngle.fastSin() * OrbSettings.size
-                val cosA = rotAngle.fastCos() * OrbSettings.size
+                val rotAngle = getRotationAngle(HatOrbsSettings.OrbSettings.spinSpeed)
+                val sinA = rotAngle.fastSin() * HatOrbsSettings.OrbSettings.size
+                val cosA = rotAngle.fastCos() * HatOrbsSettings.OrbSettings.size
 
-                val top = y + OrbSettings.size + OrbSettings.yOffset
-                val bottom = y - OrbSettings.size - OrbSettings.yOffset
+                val top = y + HatOrbsSettings.OrbSettings.size + HatOrbsSettings.OrbSettings.yOffset
+                val bottom = y - HatOrbsSettings.OrbSettings.size - HatOrbsSettings.OrbSettings.yOffset
 
                 val ax = x + sinA
                 val az = z + cosA
@@ -104,7 +101,11 @@ internal object LegacyHatsOrbs : LegacyHatsMode("Orbs") {
                 val dx = x - cosA
                 val dz = z + sinA
 
-                val ay = y + ((OrbSettings.size + OrbSettings.yOffset) * OrbSettings.centreOffset).coerceIn(bottom, top)
+                val ay =
+                    y + ((HatOrbsSettings.OrbSettings.size + HatOrbsSettings.OrbSettings.yOffset) * HatOrbsSettings.OrbSettings.centreOffset).coerceIn(
+                        bottom,
+                        top
+                    )
 
                 val color = if (!isHurt) color else Color4b(255, 0, 0, color.a)
                 // Rendering of the top part of the rhombus (4 faces/8 triangles).
