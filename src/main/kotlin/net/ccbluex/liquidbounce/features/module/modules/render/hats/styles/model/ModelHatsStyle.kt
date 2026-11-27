@@ -39,9 +39,9 @@ import net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.model
 import net.ccbluex.liquidbounce.features.module.modules.render.hats.styles.model.ModelHatsStyle.Rotation.yaw
 import net.ccbluex.liquidbounce.render.EntityModelAttachment
 import net.ccbluex.liquidbounce.render.ModelAnchor
-import net.ccbluex.liquidbounce.render.geometry.GeometryModel
-import net.ccbluex.liquidbounce.render.geometry.GeometryParser
-import net.ccbluex.liquidbounce.render.geometry.emit
+import net.ccbluex.liquidbounce.render.model.GeometryModel
+import net.ccbluex.liquidbounce.render.model.GeometryParser
+import net.ccbluex.liquidbounce.render.model.emit
 import net.ccbluex.liquidbounce.utils.render.asTexture
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.rendertype.RenderType

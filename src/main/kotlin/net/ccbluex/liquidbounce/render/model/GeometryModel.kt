@@ -17,7 +17,7 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.render.geometry
+package net.ccbluex.liquidbounce.render.model
 
 import net.ccbluex.liquidbounce.render.engine.type.Vec3f
 import net.minecraft.world.phys.Vec3
@@ -31,13 +31,6 @@ data class Bone(val name: String, val pivot: Vec3, val parent: String?, val cube
 enum class CubeFace { DOWN, UP, NORTH, SOUTH, WEST, EAST }
 data class UvRect(val x1: Float, val y1: Float, val x2: Float, val y2: Float)
 
-/**
- * A single box of the model.
- *
- * [origin] is the minimum corner (not the center) and is expected to be already
- * centered on X/Z by the parser; [size] is `to - from` from the JSON, with no
- * centering applied.
- */
 data class Cube(
     val origin: Vec3,
     val size: Vec3,
@@ -46,13 +39,6 @@ data class Cube(
     val faces: Map<CubeFace, UvRect>
 )
 
-/**
- * Emits the six faces of [cube] into [sink] as `(x, y, z, u, v)` tuples.
- *
- * Coordinates are converted from model pixels to blocks here (`/ 16`), so the
- * sink receives positions in the same units as [PoseStack] transformations.
- * Faces missing from [Cube.faces] are skipped entirely.
- */
 fun emitCube(
     cube: Cube,
     sink: (x: Float, y: Float, z: Float, u: Float, v: Float) -> Unit
@@ -83,13 +69,6 @@ fun emitCube(
     val ys = floatArrayOf(y0, y1)
     val zs = floatArrayOf(z0, z1)
 
-    /**
-     * Rotates [p] around [pivot] by [rotation] degrees: `p' = R(p - c) + c`.
-     *
-     * The X angle is negated because [Vec3f.rotateX] uses the opposite handedness
-     * to the one Minecraft block models use. That sign was found empirically:
-     * flipping it makes ears/bones point backwards. Do not "fix" it.
-     */
     fun rotateAround(p: Vec3f, pivot: Vec3?, rotation: Vec3?): Vec3f {
         if (rotation == null || pivot == null) return p
         if (rotation.x == 0.0 && rotation.y == 0.0 && rotation.z == 0.0) return p

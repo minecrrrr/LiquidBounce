@@ -17,7 +17,7 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.render.geometry
+package net.ccbluex.liquidbounce.render.model
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement

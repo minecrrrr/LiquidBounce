@@ -17,7 +17,7 @@
  * along with LiquidBounce. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.ccbluex.liquidbounce.render.geometry
+package net.ccbluex.liquidbounce.render.model
 
 fun GeometryModel.emit(sink: (x: Float, y: Float, z: Float, u: Float, v: Float) -> Unit) {
     for (bone in bones) {
